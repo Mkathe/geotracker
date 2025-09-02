@@ -28,4 +28,4 @@ func (s *server) CheckHealth(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON("OK")
 }
 
-func (s *server) Video(ctx *fiber.Ctx) error {}
+//func (s *server) Video(ctx *fiber.Ctx) error {}
