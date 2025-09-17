@@ -6,6 +6,7 @@ import (
 	"github.com/magzhan/geotracker/pkg/config"
 	"github.com/magzhan/geotracker/pkg/db/postgres"
 	"github.com/magzhan/geotracker/pkg/db/redis"
+	"github.com/magzhan/geotracker/pkg/ws"
 )
 
 func (s *server) generate() error {
@@ -15,11 +16,13 @@ func (s *server) generate() error {
 		})
 
 	s.logger = hclog.New(&hclog.LoggerOptions{
-		Name:               "library-api",
+		Name:               "geotracker",
 		JSONFormat:         true,
 		JSONEscapeDisabled: true,
 		Level:              hclog.Debug,
 	})
+
+	s.hub = ws.NewWebSocketHub(s.logger)
 
 	db, err := postgres.LoadDatabase(config.Get().ConnStr)
 	if err != nil {

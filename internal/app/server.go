@@ -2,15 +2,18 @@ package app
 
 import (
 	"database/sql"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/hashicorp/go-hclog"
 	"github.com/magzhan/geotracker/pkg/config"
+	"github.com/magzhan/geotracker/pkg/ws"
 	"github.com/redis/go-redis/v9"
 )
 
 type server struct {
 	app    *fiber.App
 	logger hclog.Logger
+	hub    *ws.WebSocketHub
 	db     *sql.DB
 	cache  *redis.Client
 }

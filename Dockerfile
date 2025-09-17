@@ -36,15 +36,12 @@ COPY --from=builder /app/migrations /app/migrations
 EXPOSE 8080
 ENTRYPOINT ["/bin/sh", "-c", "\
   dockerize \
-    -wait tcp://postgres_library:5432 \
-    -wait tcp://keycloak_library:8080 \
+    -wait tcp://postgres-service:5432 \
     -wait-retry-interval 5s \
     -timeout 120s && \
-  until pg_isready -h postgres_library -p 5432 -U ${DB_USER}; do \
+  until pg_isready -h postgres-service -p 5432 -U ${DB_USER}; do \
     echo 'Waiting for Postgres to be ready...'; \
     sleep 2; \
   done && \
   migrate -path /app/migrations -database ${CONN_DB_POSTGRES} up && \
   exec /app/main"]
-
-#-wait tcp://kafka_library:9092
