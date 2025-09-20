@@ -1,0 +1,35 @@
+services:
+  geotracker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: localhost
+      DB_USER: "geotracker"
+      DB_PORT: "5432"
+      DB_PASSWORD: "kekek"
+      DB_NAME: "geotrackerDB"
+      CONN_DB_POSTGRES: jdbc:postgresql://postgres_geotracker:6001/geotrackerDB
+      PORT: ${PORT}
+      CONN_DB_POSTGRES_OUTSIDE: ${CONN_DB_POSTGRES_OUTSIDE}
+      MIGRATION_PATH: ${MIGRATION_PATH}
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      KEYCLOAK_ROLE: ${KEYCLOAK_ROLE}
+    depends_on:
+      - postgres_geotracker
+  postgres_geotracker:
+    image: postgres:14.18
+    container_name: postgres_geotracker
+    ports:
+      - "6001:5432"
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: "geotracker"
+      POSTGRES_PASSWORD: "magzhan2006"
+      POSTGRES_DB: "geotrackerDB"
+    volumes:
+      - data_geotracker:/var/lib/postgresql/data

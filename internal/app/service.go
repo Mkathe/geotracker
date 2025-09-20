@@ -8,15 +8,25 @@ import (
 	"github.com/magzhan/geotracker/internal/model"
 )
 
-func (s *server) GetLocationDetails(location model.Location) error {
-	response, err := http.Get(fmt.Sprintf("https://nominatim.openstreetmap.org/reverse?lat=%v&lon=%v&format=json", location.Latitude, location.Longitude))
+func (s *server) GetLocationDetails(location *model.Location) error {
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf(
+		"https://nominatim.openstreetmap.org/reverse?lat=%v&lon=%v&format=json",
+		location.Latitude, location.Longitude), nil)
 	if err != nil {
-		s.logger.Error("The fetch is failed from GetLocationDetails")
+		s.logger.Error("Error creating request in GetLocationDetails", "error", err)
 		return err
 	}
-	defer response.Body.Close()
+	req.Header.Set("User-Agent", "geotracker/1.0 (em261777@gmail.com)")
 
-	err = json.NewDecoder(response.Body).Decode(&location)
+	resp, err := http.DefaultClient.Do(req)
+
+	if err != nil {
+		s.logger.Error("The fetch is failed from GetLocationDetails", "error", err)
+		return err
+	}
+	defer resp.Body.Close()
+
+	err = json.NewDecoder(resp.Body).Decode(location)
 	if err != nil {
 		s.logger.Error("The fetch is failed from GetLocationDetails")
 		return err

@@ -38,7 +38,7 @@ func (s *server) PushLocation(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(errMsgFromBodyParse)
 	}
 
-	err = s.GetLocationDetails(location)
+	err = s.GetLocationDetails(&location)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON("Cannot get location details")
 	}
@@ -54,8 +54,8 @@ func (s *server) PushLocation(ctx *fiber.Ctx) error {
 func (s *server) ServeWs(c *websocket.Conn) {
 	clientId := uuid.New().String()
 	s.hub.Register(clientId, c)
+	s.logger.Info("WebSocket connected", "clientId", clientId) // <- лог подключения
 	defer s.hub.DeRegister(clientId)
-
 	var (
 		mt  int
 		msg []byte
@@ -75,4 +75,5 @@ func (s *server) ServeWs(c *websocket.Conn) {
 			break
 		}
 	}
+	s.logger.Info("WebSocket disconnected", "clientId", clientId) // <- лог при отключении
 }

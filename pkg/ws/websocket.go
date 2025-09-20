@@ -32,7 +32,7 @@ func NewWebSocketHub(logger hclog.Logger) *WebSocketHub {
 func (w *WebSocketHub) Push(payload interface{}) error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
-
+	var pushErr error
 	for clientID, conn := range w.clients {
 		// WriteJSON will encode the location and send it
 		// to the client
@@ -41,11 +41,11 @@ func (w *WebSocketHub) Push(payload interface{}) error {
 			// Handle errors gracefully, such as removing disconnected clients
 			conn.Close()
 			delete(w.clients, clientID)
-			return err
+			pushErr = err
 		}
 	}
 
-	return nil
+	return pushErr
 }
 
 func (w *WebSocketHub) Register(clientId string, conn *websocket.Conn) {

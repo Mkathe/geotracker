@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: geotracker-deploy
+  namespace: geotracker
 spec:
   replicas: 2
   selector:
@@ -46,6 +47,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: geotracker-service
+  namespace: geotracker
 spec:
   type: NodePort
   selector:
@@ -59,6 +61,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-pvc
+  namespace: geotracker
 spec:
   accessModes:
     - ReadWriteOnce
@@ -70,6 +73,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres-deploy
+  namespace: geotracker
 spec:
   selector:
     matchLabels:
@@ -99,6 +103,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: postgres-service
+  namespace: geotracker
 spec:
   type: ClusterIP
   selector:
@@ -111,6 +116,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: postgres-secret
+  namespace: geotracker
 type: Opaque
 stringData:
   POSTGRES_USER: "geotracker"
